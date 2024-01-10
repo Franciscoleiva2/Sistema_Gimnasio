@@ -77,7 +77,7 @@ CREATE TABLE `clientes` (
   `apecli` text NOT NULL,
   `naci` date NOT NULL,
   `correo` varchar(30) NOT NULL,
-  `celu` char(9) NOT NULL,
+  `celu` char(12) NOT NULL,
   `estad` varchar(15) NOT NULL,
   `fere` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
