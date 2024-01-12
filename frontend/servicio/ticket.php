@@ -1,115 +1,163 @@
 <?php
 
-require "../../backend/pdf/code128.php";
+	# Incluyendo librerias necesarias #
+	require "..\..\backend\pdf\code128.php";
 
-$pdf = new PDF_Code128('P','mm',array(80,258));
-$pdf->SetMargins(4,10,4);
-$pdf->AddPage();
+	$pdf = new PDF_Code128('P','mm','Letter');
+	$pdf->SetMargins(17,17,17);
+	$pdf->AddPage();
 
-# Incluye la imagen en la parte superior del ticket
-$imagePath = '../../backend/img/imgTicket.png';  // Ruta de la imagen en tu servidor
-$pdf->Image($imagePath, 10, 190, 60);
+	# Logo de la empresa formato png #
+	$pdf->Image('..\..\backend\img\imgTicket.png',165,12,35,35,'PNG');
 
-# Encabezado y datos de la empresa #
-$pdf->SetFont('Arial','B',10);
-$pdf->SetTextColor(0,0,0);
+    require '../../backend/bd/ctconex.php';
 
-require '../../backend/bd/ctconex.php';
+        
+    $stmt = $connect->prepare("SELECT * FROM setting");
+    $stmt->setFetchMode(PDO::FETCH_ASSOC);
+    $stmt->execute();
 
-$stmt = $connect->prepare("SELECT * FROM setting");
-$stmt->setFetchMode(PDO::FETCH_ASSOC);
-$stmt->execute();
+    $id = $_GET['id'];
+    $stmt = $connect->prepare("SELECT servicio.idservc, plan.idplan, plan.foto, plan.prec,plan.nompla, servicio.ini, servicio.fin, clientes.idclie, clientes.numid, clientes.nomcli, clientes.apecli, clientes.naci, clientes.celu, clientes.correo, servicio.estod, servicio.fere, servicio.canc FROM servicio INNER JOIN plan ON servicio.idplan = plan.idplan INNER JOIN clientes ON servicio.idclie = clientes.idclie WHERE servicio.idservc= '$id' LIMIT 1");
+    $stmt->setFetchMode(PDO::FETCH_ASSOC);
+    $stmt->execute();
 
-while($a = $stmt->fetch()){
-    $pdf->MultiCell(0,5,utf8_decode(strtoupper($a['nomem'])),0,'C',false);
-    $pdf->SetFont('Arial','',9);
-    $pdf->MultiCell(0,5,utf8_decode("CUIL: ".$a['ruc']),0,'C',false);
-    $pdf->MultiCell(0,5,utf8_decode("Direccion: ".$a['direc1']),0,'C',false);
-    $pdf->MultiCell(0,5,utf8_decode("Teléfono: ".$a['celu']),0,'C',false);
-}
+    if ($row = $stmt->fetch()) {
 
-$pdf->Ln(1);
-$pdf->Cell(0,5,utf8_decode("------------------------------------------------------"),0,0,'C');
-$pdf->Ln(5);
+	# Encabezado y datos de la empresa #
+	$pdf->SetFont('Arial','B',16);
+	$pdf->SetTextColor(32,100,210);
+	$pdf->Cell(150,10,iconv("UTF-8", "ISO-8859-1",strtoupper("SMAF- Acondicionamiento Fisico")),0,0,'L');
 
-$pdf->MultiCell(0,5,utf8_decode("Fecha:".date("d/m/Y") ),0,'C',false);
+	$pdf->Ln(9);
 
-$id = $_GET['id'];
-$stmt = $connect->prepare("SELECT servicio.idservc, plan.idplan, plan.foto, plan.prec,plan.nompla, servicio.ini, servicio.fin, clientes.idclie, clientes.numid, clientes.nomcli, clientes.apecli, clientes.naci, clientes.celu, clientes.correo, servicio.estod, servicio.fere FROM servicio INNER JOIN plan ON servicio.idplan = plan.idplan INNER JOIN clientes ON servicio.idclie = clientes.idclie WHERE servicio.idservc= '$id'");
-$stmt->setFetchMode(PDO::FETCH_ASSOC);
-$stmt->execute();
+	$pdf->SetFont('Arial','',10);
+	$pdf->SetTextColor(39,39,51);
+	$pdf->Cell(150,9,iconv("UTF-8", "ISO-8859-1","CUIT: 0000000000"),0,0,'L');
 
-while($row = $stmt->fetch()){
-    $pdf->MultiCell(0,5,utf8_decode("Caja Nro: 1"),0,'C',false);
-    $pdf->MultiCell(0,5,utf8_decode("Cajero: administrador"),0,'C',false);
-    $pdf->SetFont('Arial','B',10);
+	$pdf->Ln(5);
 
-    $pdf->MultiCell(0,5,utf8_decode(strtoupper("Ticket Nro:". $row['idservc'] )),0,'C',false);
-    $pdf->SetFont('Arial','',9);
+	$pdf->Cell(150,9,iconv("UTF-8", "ISO-8859-1","Direccion Av. Rolón y Luis Agote"),0,0,'L');
 
-    $pdf->Ln(1);
-    $pdf->Cell(0,5,utf8_decode("------------------------------------------------------"),0,0,'C');
-    $pdf->Ln(5);
+	$pdf->Ln(5);
 
-    $pdf->MultiCell(0,5,utf8_decode("Cliente: ". $row['nomcli'] ." ". $row['apecli']),0,'C',false);
-    $pdf->MultiCell(0,5,utf8_decode("Telefono: ". $row['celu']),0,'C',false);
+	$pdf->Cell(150,9,iconv("UTF-8", "ISO-8859-1","Teléfono: 00000000"),0,0,'L');
 
-    $pdf->Ln(1);
-    $pdf->Cell(0,5,utf8_decode("-------------------------------------------------------------------"),0,0,'C');
-    $pdf->Ln(3);
+	$pdf->Ln(5);
 
-    # Tabla de productos #
-    $pdf->Cell(70,5,utf8_decode("Servicio"),0,0,'C');
-    $pdf->Ln(3);
-    $pdf->Cell(72,5,utf8_decode("-------------------------------------------------------------------"),0,0,'C');
-    $pdf->Ln(3);
+	$pdf->Cell(150,9,iconv("UTF-8", "ISO-8859-1","Email: correo@ejemplo.com"),0,0,'L');
 
-    /*----------  Detalles de la tabla  ----------*/
-    $pdf->Cell(70,5,utf8_decode($row['nompla']),0,0,'C');
-    $pdf->Ln(6);
-    $pdf->MultiCell(0,4,utf8_decode("Desde: ". $row['ini'] ."\nHasta: ". $row['fin']),0,'C',false);
-    $pdf->Ln(4);
-    /*----------  Fin Detalles de la tabla  ----------*/
+	$pdf->Ln(10);
 
-    $pdf->Cell(72,5,utf8_decode("-------------------------------------------------------------------"),0,0,'C');
-    $pdf->Ln(5);
+	$pdf->SetFont('Arial','',10);
+	$pdf->Cell(30,7,iconv("UTF-8", "ISO-8859-1","Fecha de emisión:"),0,0);
+	$pdf->SetTextColor(97,97,97);
+    date_default_timezone_set('America/Argentina/Buenos_Aires'); // Configura la zona horaria de Argentina
+    $fechaHoraArgentina = date("d/m/Y h:i A");
+    $pdf->Cell(116, 7, iconv("UTF-8", "ISO-8859-1", $fechaHoraArgentina), 0, 0, 'L');
+    
+	$pdf->SetFont('Arial','B',10);
+	$pdf->SetTextColor(39,39,51);
+	$pdf->Cell(35,7,iconv("UTF-8", "ISO-8859-1",strtoupper("Factura Nro.")),0,0,'C');
 
-    # Impuestos & totales #
-    $pdf->Cell(18,5,utf8_decode(""),0,0,'C');
-    $pdf->Cell(22,5,utf8_decode("SUBTOTAL"),0,0,'C');
-    $pdf->Cell(32,5,utf8_decode("S/".$row['prec']),0,0,'C');
+	$pdf->Ln(7);
 
-    $pdf->Ln(5);
+	$pdf->SetFont('Arial','',10);
+	$pdf->Cell(12,7,iconv("UTF-8", "ISO-8859-1","Cajero:"),0,0,'L');
+	$pdf->SetTextColor(97,97,97);
+	$pdf->Cell(134,7,iconv("UTF-8", "ISO-8859-1","SMAF"),0,0,'L');
+	$pdf->SetFont('Arial','B',10);
+	$pdf->SetTextColor(97,97,97);
+	$pdf->Cell(35,7,iconv("UTF-8", "ISO-8859-1",strtoupper("1")),0,0,'C');
 
-    $pdf->Cell(18,5,utf8_decode(""),0,0,'C');
-    $pdf->Cell(22,5,utf8_decode("IVA (0%)"),0,0,'C');
-    $pdf->Cell(32,5,utf8_decode("S/".$row['prec']),0,0,'C');
+	$pdf->Ln(10);
 
-    $pdf->Ln(5);
+	$pdf->SetFont('Arial','',10);
+	$pdf->SetTextColor(39,39,51);
+	$pdf->Cell(13,7,iconv("UTF-8", "ISO-8859-1","Cliente:"),0,0);
+	$pdf->SetTextColor(97,97,97);
+	$pdf->Cell(60,7,iconv("UTF-8", "ISO-8859-1",$row['nomcli'] . " " . $row['apecli']),0,0,'L');
+	$pdf->SetTextColor(97,97,97);
+	$pdf->Cell(60,7,iconv("UTF-8", "ISO-8859-1","DNI: " . $row['numid']),0,0,'L');
+	$pdf->SetTextColor(39,39,51);
+	$pdf->Cell(7,7,iconv("UTF-8", "ISO-8859-1","Tel:"),0,0,'L');
+	$pdf->SetTextColor(97,97,97);
+	$pdf->Cell(35,7,iconv("UTF-8", "ISO-8859-1",$row['celu']),0,0);
+	$pdf->SetTextColor(39,39,51);
 
-    $pdf->Cell(72,5,utf8_decode("-------------------------------------------------------------------"),0,0,'C');
-    $pdf->Ln(5);
+	$pdf->Ln(7);
 
-    $pdf->Cell(18,5,utf8_decode(""),0,0,'C');
-    $pdf->Cell(22,5,utf8_decode("TOTAL A PAGAR"),0,0,'C');
-    $pdf->Cell(32,5,utf8_decode("S/".$row['prec']),0,0,'C');
+	$pdf->SetTextColor(39,39,51);
+	$pdf->Cell(6,7,iconv("UTF-8", "ISO-8859-1","Dir:"),0,0);
+	$pdf->SetTextColor(97,97,97);
+	$pdf->Cell(109,7,iconv("UTF-8", "ISO-8859-1","Goya, Corrientes"),0,0);
 
-    $pdf->Ln(10);
+	$pdf->Ln(9);
 
-    $pdf->MultiCell(0,5,utf8_decode("*** Precios de productos incluyen impuestos. Para poder realizar un reclamo o devolución debe de presentar este ticket ***"),0,'C',false);
+	# Tabla de productos #
+	$pdf->SetFont('Arial','',8);
+	$pdf->SetFillColor(23,83,201);
+	$pdf->SetDrawColor(23,83,201);
+	$pdf->SetTextColor(255,255,255);
+	$pdf->Cell(65,8,iconv("UTF-8", "ISO-8859-1","Servicio"),1,0,'C',true);
+    $pdf->Cell(20,8,iconv("UTF-8", "ISO-8859-1","Inicio"),1,0,'C',true);
+    $pdf->Cell(20,8,iconv("UTF-8", "ISO-8859-1","Vencimiento"),1,0,'C',true);
+	$pdf->Cell(25,8,iconv("UTF-8", "ISO-8859-1","Precio"),1,0,'C',true);
+	$pdf->Cell(19,8,iconv("UTF-8", "ISO-8859-1","Desc."),1,0,'C',true);
+	$pdf->Cell(32,8,iconv("UTF-8", "ISO-8859-1","Subtotal"),1,0,'C',true);
 
-    $pdf->SetFont('Arial','B',9);
-    $pdf->Cell(0,7,utf8_decode("Gracias por confiar en"),'',0,'C');
+	$pdf->Ln(8);
 
-    $pdf->Ln(9);
+	
+	$pdf->SetTextColor(39,39,51);
 
-    # Codigo de barras #
-    $pdf->Code128(5,$pdf->GetY(),"COD000001V000".$row['idservc'],70,20);
-    $pdf->SetXY(0,$pdf->GetY()+21);
-    $pdf->SetFont('Arial','',14);
-    $pdf->MultiCell(0,5,utf8_decode("COD000001V000".$row['idservc']),0,'C',false);
-}
 
-# Nombre del archivo PDF #
-$pdf->Output('ticket.pdf', 'D');
-?>
+
+	/*----------  Detalles de la tabla  ----------*/
+	$pdf->Cell(65,7,iconv("UTF-8", "ISO-8859-1",$row['nompla']),'L',0,'C');
+    $pdf->Cell(20,7,iconv("UTF-8", "ISO-8859-1",$row['ini']),'L',0,'C');
+    $pdf->Cell(20,7,iconv("UTF-8", "ISO-8859-1",$row['fin']),'L',0,'C');
+	$pdf->Cell(25,7,iconv("UTF-8", "ISO-8859-1","$".$row['prec']." ARS"),'L',0,'C');
+	$pdf->Cell(19,7,iconv("UTF-8", "ISO-8859-1","$0.00 ARS"),'L',0,'C');
+	$pdf->Cell(32,7,iconv("UTF-8", "ISO-8859-1","$".$row['prec']." ARS"),'LR',0,'C');
+	$pdf->Ln(7);
+	/*----------  Fin Detalles de la tabla  ----------*/
+
+
+	
+	$pdf->SetFont('Arial','B',9);
+	
+	# Impuestos & totales #
+	$pdf->Cell(100,7,iconv("UTF-8", "ISO-8859-1",''),'T',0,'C');
+	$pdf->Cell(15,7,iconv("UTF-8", "ISO-8859-1",''),'T',0,'C');
+	$pdf->Cell(32,7,iconv("UTF-8", "ISO-8859-1","SUBTOTAL"),'T',0,'C');
+	$pdf->Cell(34,7,iconv("UTF-8", "ISO-8859-1","+ $".$row['prec']." ARS"),'T',0,'C');
+
+	$pdf->Ln(7);
+
+	$pdf->Cell(100,7,iconv("UTF-8", "ISO-8859-1",''),'',0,'C');
+	$pdf->Cell(15,7,iconv("UTF-8", "ISO-8859-1",''),'',0,'C');
+
+
+	$pdf->Cell(32,7,iconv("UTF-8", "ISO-8859-1","TOTAL ABONADO"),'T',0,'C');
+	$pdf->Cell(34,7,iconv("UTF-8", "ISO-8859-1","$".$row['prec']." ARS"),'T',0,'C');
+
+	$pdf->Ln(12);
+
+	$pdf->SetFont('Arial','',9);
+
+	$pdf->SetTextColor(39,39,51);
+	$pdf->MultiCell(0,9,iconv("UTF-8", "ISO-8859-1","*** Para poder realizar un reclamo o devolución debe de presentar esta factura ***"),0,'C',false);
+
+	$pdf->Ln(9);
+
+	# Codigo de barras #
+	$pdf->SetFillColor(39,39,51);
+	$pdf->SetDrawColor(23,83,201);
+	$pdf->Code128(72,$pdf->GetY(),"COD000001V0001",70,20);
+	$pdf->SetXY(12,$pdf->GetY()+21);
+	$pdf->SetFont('Arial','',12);
+	$pdf->MultiCell(0,5,iconv("UTF-8", "ISO-8859-1","COD000001V0001"),0,'C',false);
+    }
+	# Nombre del archivo PDF #
+	$pdf->Output("I","Factura_Nro_1.pdf",true);

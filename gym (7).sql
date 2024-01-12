@@ -158,6 +158,17 @@ CREATE TABLE `plan` (
   `fere` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
+INSERT INTO `plan` (`idplan`, `nompla`, `estp`, `prec`, `fere`) VALUES
+(1, 'Plan General', 'Activo', 9000, CURRENT_TIMESTAMP),
+(2, 'Plan rehabilitacion de tobillo', 'Activo', 9000, CURRENT_TIMESTAMP),
+(3, 'Plan rehabilitacion de rodilla', 'Activo', 9000, CURRENT_TIMESTAMP),
+(4, 'Plan musculacion', 'Inactivo', 9000, CURRENT_TIMESTAMP),
+(5, 'Plan promocional', 'Activo', 9000, CURRENT_TIMESTAMP);
+(6, 'Plan de Yoga', 'Activo', 8000, CURRENT_TIMESTAMP),
+(7, 'Plan de Cardio', 'Activo', 8500, CURRENT_TIMESTAMP),
+(8, 'Plan de Pilates', 'Inactivo', 9500, CURRENT_TIMESTAMP),
+(9, 'Plan de Entrenamiento Personalizado', 'Activo', 12000, CURRENT_TIMESTAMP),
+(10, 'Plan de Crossfit', 'Activo', 10000, CURRENT_TIMESTAMP);
 -- --------------------------------------------------------
 
 --
@@ -192,6 +203,7 @@ CREATE TABLE `servicio` (
   `estod` varchar(15) NOT NULL,
   `meto` text NOT NULL,
   `canc` decimal(10,2) NOT NULL,
+  `profe` text NOT NULL, 
   `fere` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
@@ -214,11 +226,33 @@ CREATE TABLE `setting` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 --
--- Volcado de datos para la tabla `setting`
+-- ELEMENTOS PARA LA BASE DE DATOS`setting`
 --
 
 INSERT INTO `setting` (`idsett`, `nomem`, `ruc`, `decrp`, `corr`, `direc1`, `direc2`, `celu`, `foto`) VALUES
 (1, 'MK FITNESS GYM', '14356464564564', 'MK FITNESS GYM', 'mkfitnessgym@gmail.com', 'direc1', '', '976756756', '944032.png');
+
+-- Insertar datos en la tabla clientes con idclie
+INSERT INTO `clientes` (`idclie`, `numid`, `nomcli`, `apecli`, `naci`, `correo`, `celu`, `estad`, `fere`)
+VALUES 
+(1, '12345678', 'Carlos', 'González', '1985-05-12', 'carlosgonzalez@gmail.com', '123456789', 'Activo', CURRENT_TIMESTAMP),
+(2, '23456789', 'María', 'López', '1990-09-25', 'marialopez@gmail.com', '987654321', 'Activo', CURRENT_TIMESTAMP),
+(3, '34567890', 'Lucía', 'Martínez', '1988-03-18', 'luciamartinez@gmail.com', '456789012', 'Activo', CURRENT_TIMESTAMP),
+(4, '45678901', 'Juan', 'Rodríguez', '1982-11-30', 'juanrodriguez@gmail.com', '789012345', 'Activo', CURRENT_TIMESTAMP),
+(5, '56789012', 'Laura', 'Hernández', '1995-07-08', 'laurahernandez@gmail.com', '210987654', 'Activo', CURRENT_TIMESTAMP),
+(6, '67890123', 'Elena', 'Pérez', '1993-12-28', 'elenaperez@gmail.com', '987654321', 'Activo', CURRENT_TIMESTAMP),
+(7, '78901234', 'Alejandro', 'Gómez', '1987-08-15', 'alejandrogomez@gmail.com', '654321987', 'Activo', CURRENT_TIMESTAMP),
+(8, '89012345', 'Sofía', 'Díaz', '1996-04-03', 'sofiadiaz@gmail.com', '321654987', 'Activo', CURRENT_TIMESTAMP),
+(9, '90123456', 'Martín', 'Sánchez', '1980-10-20', 'martinsanchez@gmail.com', '987123654', 'Activo', CURRENT_TIMESTAMP),
+(10, '12349876', 'Valentina', 'Romero', '1998-06-17', 'valentinaromero@gmail.com', '456789123', 'Activo', CURRENT_TIMESTAMP),
+(11, '23456789', 'Luis', 'Fernández', '1991-07-10', 'luisfernandez@gmail.com', '111222333', 'Activo', CURRENT_TIMESTAMP),
+(12, '34567890', 'Ana', 'García', '1986-04-22', 'anagarcia@gmail.com', '444555666', 'Activo', CURRENT_TIMESTAMP),
+(13, '45678901', 'Diego', 'Suárez', '1994-11-15', 'diegosuarez@gmail.com', '777888999', 'Activo', CURRENT_TIMESTAMP),
+(14, '56789012', 'Carolina', 'Martínez', '1983-09-05', 'carolinamartinez@gmail.com', '123987456', 'Activo', CURRENT_TIMESTAMP),
+(15, '67890123', 'Federico', 'López', '1990-02-18', 'federicolopez@gmail.com', '654987321', 'Activo', CURRENT_TIMESTAMP);
+
+-- Insertar datos en la tabla plan con idplan
+
 
 -- --------------------------------------------------------
 

@@ -446,7 +446,7 @@ if ($d->stock <= 0) {
     <label for="email">Tipo de pago<span class="text-danger">*</span></label>
     <select class="form-control" required name="cxtcre">
           <option value="">----------Seleccione------------</option>  
-            <option value="Yape">Tarjeta</option> 
+            <option value="Yape">Transferencia</option> 
             <option value="Efectivo">Efectivo</option>                         
     </select>
 </div>   

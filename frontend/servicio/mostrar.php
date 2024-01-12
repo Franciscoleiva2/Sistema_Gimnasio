@@ -256,7 +256,7 @@ if (!isset($_SESSION['rol']) || $_SESSION['rol'] != 1) {
                                 <div class="card-content table-responsive">
                                     <?php
                                     require '../../backend/bd/ctconex.php';
-                                    $sentencia = $connect->prepare("SELECT servicio.idservc, plan.idplan, plan.foto, plan.nompla, servicio.ini, servicio.fin, clientes.idclie, clientes.numid, clientes.nomcli, clientes.apecli, clientes.naci, clientes.celu, clientes.correo, servicio.estod, servicio.fere FROM servicio INNER JOIN plan ON servicio.idplan = plan.idplan INNER JOIN clientes ON servicio.idclie = clientes.idclie order BY idservc DESC;");
+                                    $sentencia = $connect->prepare("SELECT servicio.profe ,servicio.idservc, plan.idplan, plan.foto, plan.nompla, servicio.ini, servicio.fin, clientes.idclie, clientes.numid, clientes.nomcli, clientes.apecli, clientes.naci, clientes.celu, clientes.correo, servicio.estod, servicio.fere FROM servicio INNER JOIN plan ON servicio.idplan = plan.idplan INNER JOIN clientes ON servicio.idclie = clientes.idclie order BY idservc DESC;");
                                     $sentencia->execute();
 
                                     $data =  array();
@@ -270,8 +270,8 @@ if (!isset($_SESSION['rol']) || $_SESSION['rol'] != 1) {
                                         <table class="table table-hover" id="example">
                                             <thead class="text-primary">
                                                 <tr>
-                                                    <th>Foto</th>
                                                     <th>Plan</th>
+                                                    <th>Profesor</th> <!-- Nueva columna para el profesor -->
                                                     <th>Cliente</th>
                                                     <th>Periodo</th>
                                                     <th>Dias restantes</th>
@@ -279,42 +279,27 @@ if (!isset($_SESSION['rol']) || $_SESSION['rol'] != 1) {
                                                     <th>Acciones</th>
                                                 </tr>
                                             </thead>
+
                                             <tbody>
                                                 <?php foreach ($data as $g) : ?>
                                                     <tr>
-                                                        <td><img src="../../backend/img/subidas/<?php echo $g->foto ?>" hight='90' width='90' height='50'></td>
-
                                                         <td>
-
-                                                            <?php
-                                                            if ($g->idplan == '1') {
-                                                                // code...
-                                                                echo '<span class="badge badge-primary">PLAN BASICO</span>';
-                                                            } elseif ($g->idplan == '2') {
-                                                                echo '<span class="badge badge-warning">PLAN STANDARD</span>';
-                                                            } else {
-                                                                // code...
-                                                                echo '<span class="badge badge-danger">PLAN PREMIUM</span>';
-                                                            }
-
-
-                                                            ?>
-
+                                                            <?php echo '<span class="badge badge-primary">' . htmlspecialchars($g->nompla) . '</span>'; ?>
                                                         </td>
 
-                                                        <td><?php echo  $g->nomcli; ?>&nbsp;<?php echo  $g->apecli; ?></td>
-                                                        <?php if ($g->estod == 'Activo') { ?>
 
-                                                            <td style="color: #3e5569;"><strong><?php echo  $g->ini; ?> - <?php echo  $g->fin; ?></strong></td>
-                                                        <?php  } else { ?>
 
+                                                        <td><?php echo htmlspecialchars($g->profe); ?></td> <!-- Nueva columna para el profesor -->
+
+                                                        <td><?php echo $g->nomcli . '&nbsp;' . $g->apecli; ?></td>
+
+                                                        <?php if ($g->estod == 'Activo') : ?>
+                                                            <td style="color: #3e5569;"><strong><?php echo $g->ini . ' - ' . $g->fin; ?></strong></td>
+                                                        <?php else : ?>
                                                             <td style="color: #3e5569;">
                                                                 <span class="text-dark"><strong>Suscripcion inactiva</strong></span>
                                                             </td>
-
-
-                                                        <?php  } ?>
-
+                                                        <?php endif; ?>
 
                                                         <td style="color: #3e5569;">
                                                             <?php
@@ -326,52 +311,45 @@ if (!isset($_SESSION['rol']) || $_SESSION['rol'] != 1) {
                                                             $contador = date_diff($datetime1, $datetime2);
                                                             $differenceFormat = '%a';
 
-
                                                             while ($fechaEnvio == '0000-00-00') {
                                                                 echo '<span class="label label-success">FREE</span>';
                                                                 $fechaEnvio++;
                                                             }
+
                                                             if ($esta == 'Inactivo') {
                                                                 echo '<span class="text-dark"><strong>Cancelado</strong></span>';
                                                             } elseif ($fechaEnvio > $fechaActual) {
                                                                 echo $contador->format($differenceFormat);
                                                             } else {
-
                                                                 echo '<span class="text-danger"><strong>Renovar</strong></span>';
                                                             }
-
                                                             ?>
                                                         </td>
 
-                                                        <td><?php if ($g->estod == 'Activo') { ?>
-
+                                                        <td><?php if ($g->estod == 'Activo') : ?>
                                                                 <span class="badge badge-success">Activo</span>
-                                                            <?php  } else { ?>
+
+                                                            <?php else : ?>
                                                                 <span class="badge badge-danger">Inactivo</span>
-                                                            <?php  } ?>
+                                                                <a class="btn btn-warning text-white" href="../servicio/actualizar.php?id=<?php echo $g->idservc; ?>"><i class='material-icons' data-toggle='tooltip' title='crear'>edit</i></a>
+                                                            <?php endif ?>
                                                         </td>
-                                                        <td>
-                                                            <?php if ($g->estod == 'Activo') { ?>
-                                                                <a class="btn btn-primary text-white" href="../servicio/ver.php?id=<?php echo  $g->idservc; ?>"><i class='material-icons' data-toggle='tooltip' title='Visualizar'>visibility</i></a>
+                                                        <td><?php if ($g->estod == 'Activo') : ?>
 
-                                                                <a class="btn btn-warning text-white" href="../servicio/actualizar.php?id=<?php echo  $g->idservc; ?>"><i class='material-icons' data-toggle='tooltip' title='Editar'>edit</i></a>
-                                                                <a class="btn btn-danger text-white" href="../servicio/eliminar.php?id=<?php echo  $g->idservc; ?>"><i class='material-icons' data-toggle='tooltip' title='Cancelar'>cancel</i></a>
-
-
-                                                                <a class="btn btn-secondary text-white" target="_blank" href="https://api.whatsapp.com/send/?phone=<?php echo  $g->celu; ?>&text=Hola🖐,%20FITNESS-GYM%20te%20recuerda%20que%20tu%20membresia%20finalizo%20espero%20poder%20contar%20contigo%20un%20mes%20mas%20te%20invito%20a%20renovar%20tu%20membresia%20a%0A%0Atravez%20de%20los%20siguientes%20canales:%20yape:%20955698018%20plin:%20922146446%20Efectivo%20Tarjeta%20LOS%20ESPERAMOS%0A%0A"><i class='material-icons' data-toggle='tooltip' title='crear'>smartphone</i></a>
-
-                                                                <a class="btn btn-dark text-white" href="../servicio/correo.php?id=<?php echo  $g->idservc; ?>"><i class='material-icons' data-toggle='tooltip' title='Correo'>mail</i></a>
-
-                                                                <a class="btn btn-info text-white" href="../servicio/ticket.php?id=<?php echo  $g->idservc; ?>"><i class='material-icons' data-toggle='tooltip' title='Ticket'>print</i></a>
-
-                                                            <?php  } else { ?>
-                                                                <a class="btn btn-warning text-white" href="../servicio/actualizar.php?id=<?php echo  $g->idservc; ?>"><i class='material-icons' data-toggle='tooltip' title='crear'>edit</i></a>
-                                                            <?php  } ?>
-
+                                                                <a class="btn btn-primary text-white" href="../servicio/ver.php?id=<?php echo $g->idservc; ?>"><i class='material-icons' data-toggle='tooltip' title='Visualizar'>visibility</i></a>
+                                                                <a class="btn btn-warning text-white" href="../servicio/actualizar.php?id=<?php echo $g->idservc; ?>"><i class='material-icons' data-toggle='tooltip' title='Editar'>edit</i></a>
+                                                                <a class="btn btn-danger text-white" href="../servicio/eliminar.php?id=<?php echo $g->idservc; ?>"><i class='material-icons' data-toggle='tooltip' title='Cancelar'>cancel</i></a>
+                                                                <a class="btn btn-dark text-white" href="../servicio/correo.php?id=<?php echo $g->idservc; ?>"><i class='material-icons' data-toggle='tooltip' title='Correo'>mail</i></a>
+                                                                <a class="btn btn-info text-white" href="../servicio/ticket.php?id=<?php echo $g->idservc; ?>"><i class='material-icons' data-toggle='tooltip' title='Ticket'>print</i></a>
+                                                            <?php else : ?>
+                                                                <span class="badge badge-danger">Inactivo</span>
+                                                                <a class="btn btn-warning text-white" href="../servicio/actualizar.php?id=<?php echo $g->idservc; ?>"><i class='material-icons' data-toggle='tooltip' title='crear'>edit</i></a>
+                                                            <?php endif ?>
                                                         </td>
                                                     </tr>
                                                 <?php endforeach; ?>
                                             </tbody>
+
                                         </table>
                                     <?php else : ?>
                                         <!-- Warning Alert -->

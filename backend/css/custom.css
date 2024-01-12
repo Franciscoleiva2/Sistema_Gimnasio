@@ -215,7 +215,7 @@ a:focus {
 	line-height: 30px;
 	border-radius:5px;
     font-size: 15px;
-	position:relative;'
+	position:relative;
     font-weight: 400;
     display: block;
 }
@@ -424,6 +424,29 @@ a:focus {
     width: 56px;
     height: 56px;
 }
+
+
+.client-name {
+    font-size: 18px;
+    font-weight: bold;
+    color: #333; /* Color de texto más oscuro */
+    margin: 10px 0;
+    padding: 8px;
+    background-color: #f8f9fa; /* Color de fondo más claro */
+    border: 1px solid #ced4da; /* Borde alrededor del nombre */
+    border-radius: 5px; /* Bordes redondeados */
+    display: inline-block; /* Alinea los nombres en línea */
+}
+
+.client-link {
+    text-decoration: none; /* Quita la subrayado del enlace */
+    color: #333; /* Color del texto del enlace */
+}
+
+.client-link:hover {
+    text-decoration: underline; /* Subrayado al pasar el mouse */
+}
+
 
 .icon.icon-warning {
     color: #ff9800;
